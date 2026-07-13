@@ -1,0 +1,326 @@
+
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Aria — Architecture Blueprint</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, "Segoe UI", system-ui, sans-serif; font-size: 14px; line-height: 1.6; background: #ffffff; color: #1f2328; }
+  .page { max-width: 760px; margin: 0 auto; padding: 36px 20px 56px; }
+
+  h1 { font-size: 22px; font-weight: 700; margin-bottom: 2px; }
+  .sub { font-size: 13px; color: #57606a; margin-bottom: 32px; }
+  h2 { font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.6px; color: #57606a; margin: 32px 0 12px; border-bottom: 1px solid #e5e7eb; padding-bottom: 6px; }
+
+  /* ── Architecture SVG diagram ── */
+  .diagram-wrap { background: #f7f8fa; border: 1px solid #e5e7eb; border-radius: 10px; padding: 24px; margin-bottom: 28px; }
+
+  svg text { font-family: -apple-system, "Segoe UI", system-ui, sans-serif; }
+
+  /* ── Layer cards ── */
+  .layers { display: flex; flex-direction: column; gap: 12px; margin-bottom: 28px; }
+  .layer { border: 1px solid #e5e7eb; border-radius: 8px; overflow: hidden; }
+  .layer-header { padding: 10px 16px; font-size: 13px; font-weight: 700; display: flex; align-items: center; gap: 8px; }
+  .layer-body { padding: 10px 16px 14px; display: flex; flex-wrap: wrap; gap: 8px; }
+  .chip { display: inline-flex; align-items: center; gap: 5px; background: #fff; border: 1px solid #e5e7eb; border-radius: 6px; padding: 5px 11px; font-size: 12.5px; color: #1f2328; }
+  .chip .dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+
+  .l-ui    { background: #eff6ff; border-color: #bfdbfe; }
+  .l-ui .layer-header { background: #dbeafe; color: #1e40af; }
+  .l-be    { background: #f0fdf4; border-color: #bbf7d0; }
+  .l-be .layer-header { background: #dcfce7; color: #15803d; }
+  .l-ai    { background: #faf5ff; border-color: #e9d5ff; }
+  .l-ai .layer-header { background: #f3e8ff; color: #7e22ce; }
+  .l-data  { background: #fff7ed; border-color: #fed7aa; }
+  .l-data .layer-header { background: #ffedd5; color: #c2410c; }
+  .l-cloud { background: #f0f9ff; border-color: #bae6fd; }
+  .l-cloud .layer-header { background: #e0f2fe; color: #0369a1; }
+
+  /* ── Data flow table ── */
+  table { width: 100%; border-collapse: collapse; font-size: 13px; margin-bottom: 28px; }
+  th { background: #f7f8fa; color: #57606a; font-weight: 600; padding: 8px 12px; border: 1px solid #e5e7eb; text-align: left; }
+  td { padding: 8px 12px; border: 1px solid #e5e7eb; vertical-align: top; }
+  tr:nth-child(even) td { background: #fafbfc; }
+
+  .arrow { color: #3b82d4; font-weight: 700; }
+  .badge { display: inline-block; border-radius: 4px; padding: 1px 7px; font-size: 11px; font-weight: 700; }
+  .b-blue   { background: #dbeafe; color: #1e40af; }
+  .b-green  { background: #dcfce7; color: #15803d; }
+  .b-purple { background: #f3e8ff; color: #7e22ce; }
+  .b-red    { background: #fee2e2; color: #991b1b; }
+  .b-yellow { background: #fef9c3; color: #854d0e; }
+
+  /* ── Module table ── */
+  .module-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 28px; }
+  .module-card { background: #f7f8fa; border: 1px solid #e5e7eb; border-radius: 8px; padding: 12px 14px; }
+  .module-card .mname { font-size: 12.5px; font-weight: 700; color: #3b82d4; font-family: "Consolas", monospace; margin-bottom: 4px; }
+  .module-card .mdesc { font-size: 12px; color: #57606a; line-height: 1.5; }
+
+  footer { margin-top: 44px; padding-top: 14px; border-top: 1px solid #e5e7eb; text-align: center; font-size: 12px; color: #57606a; }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <h1>🌿 Aria — Architecture Blueprint</h1>
+  <p class="sub">Agentic AI for Mental Health Awareness &amp; Suicide Prevention · Built on IBM WatsonX + Bob</p>
+
+  
+  <h2>System Architecture Diagram</h2>
+  <div class="diagram-wrap">
+    <svg width="100%" xmlns="http://www.w3.org/2000/svg">
+
+      
+      <rect x="270" y="10" width="160" height="44" rx="8" fill="#dbeafe" stroke="#93c5fd" stroke-width="1.5"></rect>
+      <text x="350" y="28" text-anchor="middle" font-size="12" font-weight="700" fill="#1e40af">👤 User</text>
+      <text x="350" y="44" text-anchor="middle" font-size="11" fill="#1e40af">Browser · http://localhost:5000</text>
+
+      
+      <line x1="350" y1="54" x2="350" y2="82" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arr)"></line>
+      <text x="360" y="72" font-size="10" fill="#57606a">HTTP / JSON</text>
+
+      
+      <rect x="100" y="82" width="500" height="54" rx="8" fill="#dcfce7" stroke="#86efac" stroke-width="1.5"></rect>
+      <text x="350" y="102" text-anchor="middle" font-size="13" font-weight="700" fill="#15803d">🐍 Flask Web Server  (app.py)</text>
+      <text x="350" y="120" text-anchor="middle" font-size="11" fill="#15803d">REST API  ·  /chat  ·  /log_mood  ·  /journal  ·  /daily_report  ·  /crisis_log</text>
+
+      
+      <line x1="350" y1="136" x2="350" y2="162" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arr)"></line>
+
+      
+      <rect x="60" y="162" width="580" height="54" rx="8" fill="#f3e8ff" stroke="#c4b5fd" stroke-width="1.5"></rect>
+      <text x="350" y="182" text-anchor="middle" font-size="13" font-weight="700" fill="#7e22ce">🤖 Mental Health Agent  (mental_health_agent.py)</text>
+      <text x="350" y="200" text-anchor="middle" font-size="11" fill="#7e22ce">Conversation Memory  ·  Dynamic System Prompt Builder  ·  Risk-aware Response Loop</text>
+
+      
+      
+      <line x1="200" y1="216" x2="150" y2="260" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arr)"></line>
+      <rect x="40" y="260" width="210" height="54" rx="8" fill="#fff7ed" stroke="#fdba74" stroke-width="1.5"></rect>
+      <text x="145" y="280" text-anchor="middle" font-size="12" font-weight="700" fill="#c2410c">🔍 Crisis Detector</text>
+      <text x="145" y="296" text-anchor="middle" font-size="10" fill="#c2410c">crisis_detector.py</text>
+      <text x="145" y="310" text-anchor="middle" font-size="10" fill="#c2410c">SAFE · DISTRESS · CRISIS</text>
+
+      
+      <line x1="350" y1="216" x2="350" y2="260" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arr)"></line>
+      <rect x="255" y="260" width="190" height="54" rx="8" fill="#e0f2fe" stroke="#7dd3fc" stroke-width="1.5"></rect>
+      <text x="350" y="280" text-anchor="middle" font-size="12" font-weight="700" fill="#0369a1">☁️ WatsonX Client</text>
+      <text x="350" y="296" text-anchor="middle" font-size="10" fill="#0369a1">watsonx_client.py</text>
+      <text x="350" y="310" text-anchor="middle" font-size="10" fill="#0369a1">IAM Auth · Retry Logic</text>
+
+      
+      <line x1="500" y1="216" x2="550" y2="260" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arr)"></line>
+      <rect x="450" y="260" width="210" height="54" rx="8" fill="#faf5ff" stroke="#d8b4fe" stroke-width="1.5"></rect>
+      <text x="555" y="280" text-anchor="middle" font-size="12" font-weight="700" fill="#7e22ce">📚 Resources</text>
+      <text x="555" y="296" text-anchor="middle" font-size="10" fill="#7e22ce">resources.py</text>
+      <text x="555" y="310" text-anchor="middle" font-size="10" fill="#7e22ce">Hotlines · Tips · Exercises</text>
+
+      
+      <line x1="350" y1="314" x2="350" y2="358" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arr)"></line>
+      <text x="360" y="340" font-size="10" fill="#57606a">HTTPS · Bearer Token</text>
+
+      
+      <rect x="110" y="358" width="480" height="64" rx="8" fill="#e0f2fe" stroke="#38bdf8" stroke-width="2"></rect>
+      <text x="350" y="380" text-anchor="middle" font-size="13" font-weight="700" fill="#0369a1">☁️ IBM Cloud — WatsonX AI  (eu-de region)</text>
+      <text x="350" y="398" text-anchor="middle" font-size="11" fill="#0369a1">IAM Token Service  ·  meta-llama/llama-3-2-11b-vision-instruct</text>
+      <text x="350" y="414" text-anchor="middle" font-size="10" fill="#0369a1">Project: 688f364c-8a34-42d3-bcad-02e82595abc0</text>
+
+      
+      <line x1="200" y1="314" x2="150" y2="450" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arr)"></line>
+
+      
+      <rect x="40" y="450" width="620" height="54" rx="8" fill="#fff7ed" stroke="#fdba74" stroke-width="1.5"></rect>
+      <text x="350" y="470" text-anchor="middle" font-size="13" font-weight="700" fill="#c2410c">💾 Local Data Storage  (data/)</text>
+      <text x="350" y="488" text-anchor="middle" font-size="11" fill="#c2410c">mood_history.json  ·  journal.json  ·  crisis_log.json</text>
+
+      
+      <defs>
+        <marker id="arr">
+          <path d="M0,0 L0,6 L8,3 z" fill="#94a3b8"></path>
+        </marker>
+      </defs>
+    </svg>
+  </div>
+
+  
+  <h2>Architecture Layers</h2>
+  <div class="layers">
+
+    <div class="layer l-ui">
+      <div class="layer-header">🌐 Layer 1 — Presentation (Frontend)</div>
+      <div class="layer-body">
+        <div class="chip"><span class="dot" style="background:#3b82d4"></span>HTML5</div>
+        <div class="chip"><span class="dot" style="background:#3b82d4"></span>CSS3</div>
+        <div class="chip"><span class="dot" style="background:#3b82d4"></span>Vanilla JavaScript</div>
+        <div class="chip"><span class="dot" style="background:#3b82d4"></span>Chat UI</div>
+        <div class="chip"><span class="dot" style="background:#3b82d4"></span>Mood Tracker UI</div>
+        <div class="chip"><span class="dot" style="background:#3b82d4"></span>Journal UI</div>
+        <div class="chip"><span class="dot" style="background:#3b82d4"></span>Daily Report UI</div>
+        <div class="chip"><span class="dot" style="background:#3b82d4"></span>Crisis Log UI</div>
+      </div>
+    </div>
+
+    <div class="layer l-be">
+      <div class="layer-header">🐍 Layer 2 — Application (Backend)</div>
+      <div class="layer-body">
+        <div class="chip"><span class="dot" style="background:#16a34a"></span>Python 3.12</div>
+        <div class="chip"><span class="dot" style="background:#16a34a"></span>Flask 3.0</div>
+        <div class="chip"><span class="dot" style="background:#16a34a"></span>REST API Endpoints</div>
+        <div class="chip"><span class="dot" style="background:#16a34a"></span>Route: /chat</div>
+        <div class="chip"><span class="dot" style="background:#16a34a"></span>Route: /log_mood</div>
+        <div class="chip"><span class="dot" style="background:#16a34a"></span>Route: /daily_report</div>
+        <div class="chip"><span class="dot" style="background:#16a34a"></span>Route: /crisis_log</div>
+        <div class="chip"><span class="dot" style="background:#16a34a"></span>Route: /chat_history</div>
+      </div>
+    </div>
+
+    <div class="layer l-ai">
+      <div class="layer-header">🤖 Layer 3 — Agentic AI Core</div>
+      <div class="layer-body">
+        <div class="chip"><span class="dot" style="background:#9333ea"></span>MentalHealthAgent</div>
+        <div class="chip"><span class="dot" style="background:#9333ea"></span>Crisis Detector</div>
+        <div class="chip"><span class="dot" style="background:#9333ea"></span>Risk Level Engine</div>
+        <div class="chip"><span class="dot" style="background:#9333ea"></span>Dynamic Prompt Builder</div>
+        <div class="chip"><span class="dot" style="background:#9333ea"></span>Conversation Memory</div>
+        <div class="chip"><span class="dot" style="background:#9333ea"></span>Retry Logic (429)</div>
+        <div class="chip"><span class="dot" style="background:#9333ea"></span>Mood Tracker</div>
+        <div class="chip"><span class="dot" style="background:#9333ea"></span>Resources DB</div>
+      </div>
+    </div>
+
+    <div class="layer l-cloud">
+      <div class="layer-header">☁️ Layer 4 — IBM Cloud AI</div>
+      <div class="layer-body">
+        <div class="chip"><span class="dot" style="background:#0284c7"></span>IBM WatsonX AI</div>
+        <div class="chip"><span class="dot" style="background:#0284c7"></span>IBM IAM Auth</div>
+        <div class="chip"><span class="dot" style="background:#0284c7"></span>Llama 3.2 11B</div>
+        <div class="chip"><span class="dot" style="background:#0284c7"></span>EU-DE Region</div>
+        <div class="chip"><span class="dot" style="background:#0284c7"></span>Chat Completions API</div>
+        <div class="chip"><span class="dot" style="background:#0284c7"></span>Bearer Token Exchange</div>
+      </div>
+    </div>
+
+    <div class="layer l-data">
+      <div class="layer-header">💾 Layer 5 — Data Storage</div>
+      <div class="layer-body">
+        <div class="chip"><span class="dot" style="background:#ea580c"></span>mood_history.json</div>
+        <div class="chip"><span class="dot" style="background:#ea580c"></span>journal.json</div>
+        <div class="chip"><span class="dot" style="background:#ea580c"></span>crisis_log.json</div>
+        <div class="chip"><span class="dot" style="background:#ea580c"></span>Local File System</div>
+        <div class="chip"><span class="dot" style="background:#ea580c"></span>JSON Format</div>
+        <div class="chip"><span class="dot" style="background:#ea580c"></span>No Database Required</div>
+      </div>
+    </div>
+  </div>
+
+  
+  <h2>Request Data Flow</h2>
+  <table>
+    <tr><th>Step</th><th>From</th><th>To</th><th>What happens</th></tr>
+    <tr>
+      <td><span class="badge b-blue">1</span></td>
+      <td>User types message</td>
+      <td>Browser → Flask <span class="arrow">→</span></td>
+      <td>POST /chat with JSON body <code>{message: "..."}</code></td>
+    </tr>
+    <tr>
+      <td><span class="badge b-green">2</span></td>
+      <td>Flask</td>
+      <td>Crisis Detector <span class="arrow">→</span></td>
+      <td>Scans message against 40+ keywords → returns SAFE / DISTRESS / CRISIS</td>
+    </tr>
+    <tr>
+      <td><span class="badge b-yellow">3</span></td>
+      <td>Crisis Detector</td>
+      <td>Data Layer <span class="arrow">→</span></td>
+      <td>If CRISIS: logs event to crisis_log.json with timestamp + keywords</td>
+    </tr>
+    <tr>
+      <td><span class="badge b-purple">4</span></td>
+      <td>Flask</td>
+      <td>MentalHealthAgent <span class="arrow">→</span></td>
+      <td>Agent builds dynamic system prompt based on risk level</td>
+    </tr>
+    <tr>
+      <td><span class="badge b-blue">5</span></td>
+      <td>Agent</td>
+      <td>IBM IAM <span class="arrow">→</span></td>
+      <td>Exchanges API key for Bearer access token</td>
+    </tr>
+    <tr>
+      <td><span class="badge b-blue">6</span></td>
+      <td>WatsonX Client</td>
+      <td>IBM WatsonX AI <span class="arrow">→</span></td>
+      <td>Sends full conversation history + system prompt → receives AI reply</td>
+    </tr>
+    <tr>
+      <td><span class="badge b-green">7</span></td>
+      <td>WatsonX AI</td>
+      <td>Agent <span class="arrow">→</span></td>
+      <td>If CRISIS: appends mandatory crisis hotlines footer to reply</td>
+    </tr>
+    <tr>
+      <td><span class="badge b-green">8</span></td>
+      <td>Flask</td>
+      <td>Browser <span class="arrow">→</span></td>
+      <td>Returns <code>{reply, risk_level, keywords}</code> — UI renders chat bubble</td>
+    </tr>
+  </table>
+
+  
+  <h2>Core Modules</h2>
+  <div class="module-grid">
+    <div class="module-card">
+      <div class="mname">app.py</div>
+      <div class="mdesc">Flask web server. All REST API routes. Error handling for rate limits and connection failures.</div>
+    </div>
+    <div class="module-card">
+      <div class="mname">mental_health_agent.py</div>
+      <div class="mdesc">Core agent loop. Manages conversation history, builds system prompts, tracks peak risk level per session.</div>
+    </div>
+    <div class="module-card">
+      <div class="mname">watsonx_client.py</div>
+      <div class="mdesc">IBM WatsonX API client. IAM token exchange, chat completions, retry logic with exponential backoff on 429.</div>
+    </div>
+    <div class="module-card">
+      <div class="mname">crisis_detector.py</div>
+      <div class="mdesc">Keyword scanner. Returns SAFE, DISTRESS, or CRISIS risk level + matched keyword list from every message.</div>
+    </div>
+    <div class="module-card">
+      <div class="mname">mood_tracker.py</div>
+      <div class="mdesc">Reads and writes mood_history.json, journal.json, crisis_log.json. Generates 7-day summary reports.</div>
+    </div>
+    <div class="module-card">
+      <div class="mname">resources.py</div>
+      <div class="mdesc">Static data: crisis hotlines for 7 countries, 10 wellness tips, 3 grounding exercises (box breathing, 5-4-3-2-1, safe place).</div>
+    </div>
+  </div>
+
+  
+  <h2>Risk Detection Engine</h2>
+  <table>
+    <tr><th>Level</th><th>Triggered by</th><th>System Prompt</th><th>Response Behaviour</th></tr>
+    <tr>
+      <td><span class="badge b-green">SAFE</span></td>
+      <td>No risk keywords matched</td>
+      <td>Base empathy prompt</td>
+      <td>Warm, supportive conversation. Temp: 0.75</td>
+    </tr>
+    <tr>
+      <td><span class="badge b-yellow">DISTRESS</span></td>
+      <td>hopeless, anxious, lonely, trapped, overwhelmed…</td>
+      <td>Base + distress guidance</td>
+      <td>Validation + grounding offer + professional help reminder. Temp: 0.75</td>
+    </tr>
+    <tr>
+      <td><span class="badge b-red">CRISIS</span></td>
+      <td>suicide, end my life, kill myself, no reason to live…</td>
+      <td>Base + crisis protocol</td>
+      <td>Crisis empathy + mandatory hotlines footer appended. Temp: 0.65. Event logged.</td>
+    </tr>
+  </table>
+
+  <footer>Made with IBM Bob</footer>
+</div>
+</body>
+</html>

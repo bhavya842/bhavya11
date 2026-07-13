@@ -1,0 +1,226 @@
+
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: "Segoe UI", system-ui, sans-serif; background: #ffffff; display: flex; justify-content: center; padding: 32px 16px 48px; }
+  .page { width: 720px; }
+
+  .title { text-align: center; margin-bottom: 28px; }
+  .title h1 { font-size: 22px; font-weight: 800; color: #1f2328; letter-spacing: -0.3px; }
+  .title p  { font-size: 13px; color: #57606a; margin-top: 4px; }
+
+  /* ── Flow boxes ── */
+  .flow { display: flex; flex-direction: column; align-items: center; gap: 0; }
+
+  .box {
+    width: 100%;
+    border-radius: 12px;
+    padding: 16px 24px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    border: 2px solid transparent;
+  }
+  .box .icon { font-size: 28px; flex-shrink: 0; width: 44px; text-align: center; }
+  .box .info { flex: 1; }
+  .box .info .label { font-size: 15px; font-weight: 700; }
+  .box .info .desc  { font-size: 12px; margin-top: 3px; opacity: 0.85; }
+  .box .tag { font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 20px; white-space: nowrap; }
+
+  /* Colors per layer */
+  .user    { background: #eff6ff; border-color: #93c5fd; }
+  .user    .info .label { color: #1d4ed8; }
+  .user    .info .desc  { color: #3b82f6; }
+  .user    .tag  { background: #dbeafe; color: #1d4ed8; }
+
+  .frontend { background: #f0fdf4; border-color: #86efac; }
+  .frontend .info .label { color: #15803d; }
+  .frontend .info .desc  { color: #16a34a; }
+  .frontend .tag  { background: #dcfce7; color: #15803d; }
+
+  .flask { background: #fefce8; border-color: #fde047; }
+  .flask .info .label { color: #854d0e; }
+  .flask .info .desc  { color: #a16207; }
+  .flask .tag  { background: #fef9c3; color: #854d0e; }
+
+  .agent { background: #faf5ff; border-color: #c4b5fd; }
+  .agent .info .label { color: #6d28d9; }
+  .agent .info .desc  { color: #7c3aed; }
+  .agent .tag  { background: #ede9fe; color: #6d28d9; }
+
+  .crisis { background: #fff7ed; border-color: #fdba74; }
+  .crisis .info .label { color: #c2410c; }
+  .crisis .info .desc  { color: #ea580c; }
+  .crisis .tag  { background: #ffedd5; color: #c2410c; }
+
+  .ibm { background: #e0f2fe; border-color: #38bdf8; }
+  .ibm .info .label { color: #0369a1; }
+  .ibm .info .desc  { color: #0284c7; }
+  .ibm .tag  { background: #bae6fd; color: #0369a1; }
+
+  .storage { background: #fdf2f8; border-color: #f0abfc; }
+  .storage .info .label { color: #86198f; }
+  .storage .info .desc  { color: #a21caf; }
+  .storage .tag  { background: #fae8ff; color: #86198f; }
+
+  /* Arrow between boxes */
+  .arrow-wrap { display: flex; flex-direction: column; align-items: center; margin: 4px 0; gap: 0; }
+  .arrow-line { width: 2px; height: 18px; background: #cbd5e1; }
+  .arrow-head { width: 0; height: 0; border-left: 7px solid transparent; border-right: 7px solid transparent; border-top: 10px solid #cbd5e1; }
+  .arrow-label { font-size: 10.5px; color: #94a3b8; font-style: italic; margin-top: -6px; margin-bottom: 2px; }
+
+  /* Three column split for modules */
+  .split { display: grid; grid-template-columns: 1fr 2px 1fr 2px 1fr; gap: 0; width: 100%; margin: 4px 0; }
+  .split-divider { background: #cbd5e1; }
+  .split-box { border-radius: 10px; padding: 12px 14px; display: flex; flex-direction: column; gap: 4px; border: 2px solid transparent; }
+  .split-box .s-icon { font-size: 20px; }
+  .split-box .s-label { font-size: 13px; font-weight: 700; }
+  .split-box .s-desc  { font-size: 11px; line-height: 1.5; opacity: 0.85; }
+  .split-gap { width: 8px; }
+
+  .s-detect { background: #fff7ed; border-color: #fdba74; }
+  .s-detect .s-label { color: #c2410c; }
+  .s-detect .s-desc  { color: #ea580c; }
+
+  .s-prompt { background: #faf5ff; border-color: #c4b5fd; }
+  .s-prompt .s-label { color: #6d28d9; }
+  .s-prompt .s-desc  { color: #7c3aed; }
+
+  .s-res { background: #f0fdf4; border-color: #86efac; }
+  .s-res .s-label { color: #15803d; }
+  .s-res .s-desc  { color: #16a34a; }
+
+  /* Risk legend */
+  .legend { display: flex; justify-content: center; gap: 16px; margin: 20px 0 4px; flex-wrap: wrap; }
+  .legend-item { display: flex; align-items: center; gap: 6px; font-size: 12px; color: #374151; }
+  .legend-dot { width: 12px; height: 12px; border-radius: 50%; flex-shrink: 0; }
+
+  footer { margin-top: 36px; padding-top: 14px; border-top: 1px solid #e5e7eb; text-align: center; font-size: 12px; color: #9ca3af; }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="title">
+    <h1>🌿 Aria — Mental Health AI · Architecture Blueprint</h1>
+    <p>Powered by IBM WatsonX AI  ·  Meta Llama 3.2 11B  ·  Python Flask</p>
+  </div>
+
+  <div class="flow">
+
+    
+    <div class="box user">
+      <div class="icon">👤</div>
+      <div class="info">
+        <div class="label">User</div>
+        <div class="desc">Opens browser · Types message · Views response at http://localhost:5000</div>
+      </div>
+      <div class="tag">Browser</div>
+    </div>
+
+    <div class="arrow-wrap">
+      <div class="arrow-line"></div>
+      <div class="arrow-label">HTTP Request</div>
+      <div class="arrow-head"></div>
+    </div>
+
+    
+    <div class="box frontend">
+      <div class="icon">🌐</div>
+      <div class="info">
+        <div class="label">Frontend UI</div>
+        <div class="desc">Chat · Mood Tracker · Journal · Daily Report · Crisis Log — built with HTML + CSS + JavaScript</div>
+      </div>
+      <div class="tag">index.html</div>
+    </div>
+
+    <div class="arrow-wrap">
+      <div class="arrow-line"></div>
+      <div class="arrow-label">POST /chat  (JSON)</div>
+      <div class="arrow-head"></div>
+    </div>
+
+    
+    <div class="box flask">
+      <div class="icon">🐍</div>
+      <div class="info">
+        <div class="label">Flask Web Server</div>
+        <div class="desc">/chat  ·  /log_mood  ·  /journal  ·  /daily_report  ·  /crisis_log  ·  /chat_history</div>
+      </div>
+      <div class="tag">app.py</div>
+    </div>
+
+    <div class="arrow-wrap">
+      <div class="arrow-line"></div>
+      <div class="arrow-label">Calls agent</div>
+      <div class="arrow-head"></div>
+    </div>
+
+    
+    <div class="split">
+      <div class="split-box s-detect">
+        <div class="s-icon">🔍</div>
+        <div class="s-label">Crisis Detector</div>
+        <div class="s-desc">Scans every message · 40+ keywords · Returns SAFE / DISTRESS / CRISIS</div>
+      </div>
+      <div class="split-divider"></div>
+      <div class="split-box s-prompt">
+        <div class="s-icon">🤖</div>
+        <div class="s-label">Mental Health Agent</div>
+        <div class="s-desc">Conversation memory · Dynamic system prompt · Risk-aware responses</div>
+      </div>
+      <div class="split-divider"></div>
+      <div class="split-box s-res">
+        <div class="s-icon">📚</div>
+        <div class="s-label">Resources</div>
+        <div class="s-desc">Hotlines · Wellness tips · Box breathing · 5-4-3-2-1 grounding</div>
+      </div>
+    </div>
+
+    <div class="arrow-wrap">
+      <div class="arrow-line"></div>
+      <div class="arrow-label">HTTPS · Bearer Token</div>
+      <div class="arrow-head"></div>
+    </div>
+
+    
+    <div class="box ibm">
+      <div class="icon">☁️</div>
+      <div class="info">
+        <div class="label">IBM WatsonX AI  —  EU-DE Cloud</div>
+        <div class="desc">IAM Token Auth  ·  meta-llama/llama-3-2-11b-vision-instruct  ·  Chat Completions API  ·  Auto-retry on rate limits</div>
+      </div>
+      <div class="tag">IBM Cloud</div>
+    </div>
+
+    <div class="arrow-wrap">
+      <div class="arrow-line"></div>
+      <div class="arrow-label">Read / Write</div>
+      <div class="arrow-head"></div>
+    </div>
+
+    
+    <div class="box storage">
+      <div class="icon">💾</div>
+      <div class="info">
+        <div class="label">Local Data Storage</div>
+        <div class="desc">mood_history.json  ·  journal.json  ·  crisis_log.json  ·  Stored privately on device</div>
+      </div>
+      <div class="tag">data/ folder</div>
+    </div>
+
+  </div>
+
+  
+  <div class="legend">
+    <div class="legend-item"><div class="legend-dot" style="background:#16a34a"></div> SAFE — Normal support</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#eab308"></div> DISTRESS — Extra care mode</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#dc2626"></div> CRISIS — Hotlines shown instantly</div>
+  </div>
+
+  <footer>Made with IBM Bob</footer>
+</div>
+</body>
+</html>
